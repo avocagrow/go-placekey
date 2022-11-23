@@ -1,4 +1,4 @@
-package placekey
+package placekeygo
 
 import "net/http"
 
