@@ -2,10 +2,8 @@ package placekey
 
 import "net/http"
 
-const ()
-
 // Key is the Placekey API key used globally in the binding
-var Key string
+var APIKey string
 
 type APIResponse struct {
 	// Header contains a map of all HTTP header keys
