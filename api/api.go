@@ -1,5 +1,7 @@
 package api
 
+import placekeygo "github.com/theoriginalstove/placekey-go"
+
 type Client struct {
-	B placekey.Backend
+	B placekeygo.Backend
 }
