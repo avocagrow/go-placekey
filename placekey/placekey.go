@@ -114,6 +114,115 @@ func PlacekeyToHexBoundary(p Placekey) [][2]float64 {
 	return nil
 }
 
-func PlacekeyToPolygon(placekey) *Polygon {
+// PlacekeyToPolygon returns the Polygon boundary shape for a Placekeuy string
+func PlacekeyToPolygon(p Placekey) *Polygon {
 	return &Polygon{points: nil}
+}
+
+// Converts a Placekey string into a Well-Known Text string for the corresponding
+// hexagon. Coordinates are (longitude, latitude)
+func PlacekeyToWKT(p Placekey) string {
+	return ""
+}
+
+// PlacekeyToGeoJSON converts a Placekey string into a GeoJSON map.
+// GeoJSON uses (longitude, latitude) points, and the first and last points are identical.
+func PlacekeyToGeoJSON(p Placekey) []byte {
+	return nil
+}
+
+// PolygonToPlacekeys converts a Polygon shape into a set of Placekey strings
+// if inclTouching is true, then Placekeys whose hexagon boundary only touches that of the
+// input polygon are included in the set of boundary Placekeys
+func PolygonToPlacekeys(p *Polygon, inclTouching bool) []Placekey {
+	return nil
+}
+
+// WKTToPlacekeys converts a WKT description of a polygon into a set of Placekey strings
+func WKTToPlacekeys(w string) []Placekey {
+	return nil
+}
+
+// GeoJSONToPlacekeys converts a GeoJSON description of a polygon into a set of Placekeys
+func GeoJSONToPlacekeys(g []byte, inclTouching bool) []Placekey {
+	return nil
+}
+
+// ValidatePlacekey determines if the given Placekey string is valid,
+// includes checking for valid encoding of location
+func ValidatePlacekey(p Placekey) bool {
+	return false
+}
+
+// PlacekeyDistance calculates the distance between two Placekeys in meters
+func PlacekeyDistance(p1, p2 Placekey) float64 {
+	return 0.0
+}
+
+// parsePlacekey splits a Placekey string into what and where parts
+func parsePlacekey(p Placekey) (what, where string) {
+	if strings.Contains(string(p), "@") {
+		res := strings.Split(string(p), "@")
+		what, where = res[0], res[1]
+	} else {
+		what, where = "", string(p)
+	}
+	return what, where
+}
+
+// validateWhereClause determines if the given where string is valid
+func validateWhereClause(w string) bool {
+	return false
+}
+
+func geoDistance(p1, p2 Point) float64 {
+	return 0.0
+}
+
+func encodeH3Cell(c h3.Cell) Placekey {
+	return ""
+}
+
+func encodeShortH3Cell(c h3.Cell) string {
+	return ""
+}
+
+func decodeToH3Cell(where string) h3.Cell {
+	return 0
+}
+
+func decodeString(s string) int64 {
+	return 0
+}
+
+func stripEncoding(s string) string {
+	return ""
+}
+
+func shortenH3Cell(c h3.Cell) int64 {
+	return 0
+}
+
+func lengthenH3Cell(c int64) h3.Cell {
+	return 0
+}
+
+func cleanString(s string) string {
+	// Replacement should be in order
+	for k, v := range replacementMap {
+		if strings.Contains(s, k) {
+			s = strings.ReplaceAll(s, k, v)
+		}
+	}
+	return s
+}
+
+func dirtyString(s string) string {
+	// Replacement should be reversed
+	for k, v := range replacementMap {
+		if strings.Contains(s, v) {
+			s = strings.ReplaceAll(s, v, k)
+		}
+	}
+	return s
 }
