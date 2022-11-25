@@ -1,3 +1,5 @@
+// Functionality for converting between Placekeys, geos (latitude/longitude), or H3 indicies.
+// This package also includes additional utilities related to Placekeys.
 package placekey
 
 import (
@@ -10,14 +12,14 @@ import (
 )
 
 const (
-	RESOLUTION       = 10
-	BASERESOLUTION   = 12
-	ALPHABET         = "23456789bcdfghjkmnpqrstvwxyz"
-	ALPHABETLENGTH   = len(ALPHABET)
-	CODELENGTH       = 9
-	TUPLELENGTH      = 3
-	PADDINGCHAR      = 'a'
-	REPLACEMENTCHARS = "eu"
+	RESOLUTION        = 10
+	BASE_RESOLUTION   = 12
+	ALPHABET          = "23456789bcdfghjkmnpqrstvwxyz"
+	ALPHABETLENGTH    = len(ALPHABET)
+	CODELENGTH        = 9
+	TUPLELENGTH       = 3
+	PADDING_CHAR      = 'a'
+	REPLACEMENT_CHARS = "eu"
 )
 
 var (
@@ -38,9 +40,9 @@ var (
 	}
 	headerBits             = h3.LatLngToCell(h3.NewLatLng(0.0, 0.0), RESOLUTION)
 	baseCellShift          = math.Pow(2, (3 * 15)) // this will increment the base cell value by 1
-	unusedResolutionFiller = math.Pow(2, (3 * (15 - BASERESOLUTION)))
-	firstTupleRegex        = fmt.Sprintf("[%s%s%c]", ALPHABET, REPLACEMENTCHARS, PADDINGCHAR)
-	tupleRegex             = fmt.Sprintf("%s%s", ALPHABET, REPLACEMENTCHARS)
+	unusedResolutionFiller = math.Pow(2, (3 * (15 - BASE_RESOLUTION)))
+	firstTupleRegex        = fmt.Sprintf("[%s%s%c]", ALPHABET, REPLACEMENT_CHARS, PADDING_CHAR)
+	tupleRegex             = fmt.Sprintf("%s%s", ALPHABET, REPLACEMENT_CHARS)
 	whereRegex             = createRegex(fmt.Sprintf("^%s$", strings.Join([]string{firstTupleRegex, tupleRegex, tupleRegex}, "-")))
 	whatRegex              = createRegex(fmt.Sprintf("^[%s]{3,}(-[%s]{3,})?$", ALPHABET, ALPHABET))
 	prefixDistanceMap      = map[int]float32{
@@ -55,6 +57,7 @@ var (
 		8: 444.3,
 		9: 63.47,
 	}
+	headerInt = getHeaderInt()
 )
 
 type Placekey string
@@ -67,8 +70,10 @@ func createRegex(pattern string) *regexp.Regexp {
 	return r
 }
 
-func getHeaderInt() int {
-	return 0
+// returns the an integer corresponding to the header of an H3 integer
+func getHeaderInt() int64 {
+	headerInt := 0
+	return int64(headerInt)
 }
 
 // GeoToPlacekey converts latitude and longitude coordinates into a Placekey string
@@ -204,7 +209,9 @@ func shortenH3Cell(c h3.Cell) int64 {
 }
 
 func lengthenH3Cell(c int64) h3.Cell {
-	return 0
+	unshiftedInt := c << (3 * (15 - BASE_RESOLUTION))
+	rebuiltCell := int64(headerBits) + int64(unusedResolutionFiller) - BASE_CELL_SHIFT + unshiftedInt
+	return rebuiltCell
 }
 
 func cleanString(s string) string {

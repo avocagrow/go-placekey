@@ -1,4 +1,4 @@
-module github.com/theoriginalstove/placekey-go
+module gitlab.com/avocagrow/placekey-go
 
 go 1.19
 
