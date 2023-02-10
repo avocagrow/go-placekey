@@ -12,14 +12,14 @@ import (
 )
 
 const (
-	RESOLUTION        = 10
-	BASE_RESOLUTION   = 12
-	ALPHABET          = "23456789bcdfghjkmnpqrstvwxyz"
-	ALPHABETLENGTH    = len(ALPHABET)
-	CODELENGTH        = 9
-	TUPLELENGTH       = 3
-	PADDING_CHAR      = 'a'
-	REPLACEMENT_CHARS = "eu"
+	resolution       = 10
+	baseResolution   = 12
+	alphabet         = "23456789bcdfghjkmnpqrstvwxyz"
+	alphabetLength   = len(alphabet)
+	codeLength       = 9
+	tupleLength      = 3
+	paddingChar      = 'a'
+	replacementChars = "eu"
 )
 
 var (
@@ -34,17 +34,17 @@ var (
 		"pns":   "pne",
 		"sht":   "she",
 		"kkk":   "kke",
-		"fgt":   "fgu", // 'u' avoids introducing 'gey'
+		"fgt":   "fgu",
 		"dyk":   "dye",
 		"bch":   "bce",
 	}
-	headerBits             = h3.LatLngToCell(h3.NewLatLng(0.0, 0.0), RESOLUTION)
+	headerBits             = h3.LatLngToCell(h3.NewLatLng(0.0, 0.0), resolution)
 	baseCellShift          = math.Pow(2, (3 * 15)) // this will increment the base cell value by 1
-	unusedResolutionFiller = math.Pow(2, (3 * (15 - BASE_RESOLUTION)))
-	firstTupleRegex        = fmt.Sprintf("[%s%s%c]", ALPHABET, REPLACEMENT_CHARS, PADDING_CHAR)
-	tupleRegex             = fmt.Sprintf("%s%s", ALPHABET, REPLACEMENT_CHARS)
+	unusedResolutionFiller = math.Pow(2, (3 * (15 - baseResolution)))
+	firstTupleRegex        = fmt.Sprintf("[%s%s%c]", alphabet, replacementChars, paddingChar)
+	tupleRegex             = fmt.Sprintf("%s%s", alphabet, replacementChars)
 	whereRegex             = createRegex(fmt.Sprintf("^%s$", strings.Join([]string{firstTupleRegex, tupleRegex, tupleRegex}, "-")))
-	whatRegex              = createRegex(fmt.Sprintf("^[%s]{3,}(-[%s]{3,})?$", ALPHABET, ALPHABET))
+	whatRegex              = createRegex(fmt.Sprintf("^[%s]{3,}(-[%s]{3,})?$", alphabet, alphabet))
 	prefixDistanceMap      = map[int]float32{
 		0: 2.004e7,
 		1: 2.004e7,
@@ -88,7 +88,7 @@ func PlacekeyToGeo(placekey Placekey) (lat, lng float64) {
 
 // PlacekeyToH3 converts a Placekey string into an H3 Hexidecimal string
 func PlacekeyToH3(p Placekey) h3.Cell {
-	return h3.LatLngToCell(h3.NewLatLng(0.0, 0.0), RESOLUTION)
+	return h3.LatLngToCell(h3.NewLatLng(0.0, 0.0), resolution)
 }
 
 // H3ToPlacekey converts an H3 hexidecimal into a Placekey string
@@ -209,9 +209,9 @@ func shortenH3Cell(c h3.Cell) int64 {
 }
 
 func lengthenH3Cell(c int64) h3.Cell {
-	unshiftedInt := c << (3 * (15 - BASE_RESOLUTION))
-	rebuiltCell := int64(headerBits) + int64(unusedResolutionFiller) - BASE_CELL_SHIFT + unshiftedInt
-	return rebuiltCell
+	unshiftedInt := c << (3 * (15 - baseResolution))
+	rebuiltCell := int64(headerBits) + int64(unusedResolutionFiller) - int64(baseCellShift) + unshiftedInt
+	return h3.Cell(rebuiltCell)
 }
 
 func cleanString(s string) string {
