@@ -1,6 +1,34 @@
-package placekeygo
+package placekeyapi
 
-import "net/http"
+import (
+	"net/http"
+	"net/url"
+	"sync"
+
+	retryablehttp "github.com/hashicorp/go-retryablehttp"
+)
+
+const (
+	defaultBaseURL = "https://api.placekey.io"
+	defaultVersion = "v1"
+	userAgent      = "go-placekey"
+)
+
+type Client struct {
+	// client is the HTTP client used to communicate with the API.
+	client *retryablehttp.Client
+
+	// baseURL is the main URL for API requests.
+	baseURL *url.URL
+
+	// token is the apiToken used for authentication with the PlaceKey API.
+	token string
+
+	// tokenL protects the token from concurrent read/write access.
+	tokenL sync.RWMutex
+
+	// Services used for communicating with different parts of the Placekey API.
+}
 
 // Key is the Placekey API key used globally in the binding
 var APIKey string
@@ -19,11 +47,6 @@ type APIResponse struct {
 
 	// StatusCode is a status code as integer. e.g. 200
 	StatusCode int
-}
-
-type Backend interface {
-	Call(method, path, key string) error
-	SetMaxNetworkRetries(maxNetworkRetries int64)
 }
 
 func newAPIResponse(res *http.Response, resBody []byte) *APIResponse {

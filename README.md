@@ -7,9 +7,9 @@ Placekeys are a way to create human readable encodings for Uber's Hexigonal Hier
 ## Features:
 
 ### Placekey API:
- - [] Single Placekey 
- - [] Multiple Placekeys
- - [] Lineage 
+ - [ ] Single Placekey 
+ - [ ] Multiple Placekeys
+ - [ ] Lineage 
 
 ### Placekey utilities:
  
